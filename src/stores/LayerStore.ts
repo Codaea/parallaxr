@@ -40,15 +40,15 @@ export const useLayerStore = defineStore('layerStore', {
 
             this.layers.push(layer)
         },
-        removeLayer(layer : Layer) {
-            this.layers = this.layers.filter(l => l !== layer)
-        },
         
     },
     getters: {
         getLayers(): Layer[] {
             return this.layers as Layer[]
         },
+        getLayerById(id): Layer | undefined {
+            return Object.values(this.layers).find(layer => id === layer.id);
+        }
         
     }
 
