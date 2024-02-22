@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import FileUpload from 'primevue/fileupload'
 import type FileUploadEvent from 'primevue/fileupload'
 import PreviewWindowVue from '../components/PreviewWindow.vue'
@@ -9,10 +10,21 @@ const { addLayer, layers } = useLayerStore()
 
 function onUpload(event: FileUploadEvent) {
   const file = event.files[0]
+
   const url = URL.createObjectURL(file)
   const name = file.name
 
-  addLayer(url, name)
+  // check dimensions
+  let imageDimensions = { width: 0, height: 0 }
+
+  let img = new Image()
+  img.onload = function () {
+    imageDimensions.width = this.width
+    imageDimensions.height = this.height
+
+    addLayer(url, name, imageDimensions)
+  }
+  img.src = url
 }
 </script>
 
@@ -30,7 +42,6 @@ function onUpload(event: FileUploadEvent) {
         accept=".png"
         :auto="true"
       />
-
       <ul>
         <li v-for="layer in layers" :key="layer.id">
           <div>
