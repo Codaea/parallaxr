@@ -1,23 +1,41 @@
 import { defineStore } from "pinia";
 
-export const useLayerStore = defineStore('layerStore', () => {
-    state: () => {
-        layers: [],
+export interface Layer {
+    id: string;
+    name: string;
+    url: string;
+    visible: boolean;
+    speed: number; // animation speed
 
-    }
+}
+
+export const useLayerStore = defineStore('layerStore', {
+    state: () => ({
+        layers: [] as Layer[],
+
+    }),
     actions: {
-        addLayer(layer) {
+        addLayer(url : string, name: string) {
+            const layer: Layer = {
+                id: Math.random().toString(),
+                name: name,
+                visible: true,
+                url: url,
+                speed: 1
+            }
+
             this.layers.push(layer)
         },
-        removeLayer(layer) {
+        removeLayer(layer : Layer) {
             this.layers = this.layers.filter(l => l !== layer)
         },
         
     },
     getters: {
-        getLayers() {
-            return this.layers
-        }
+        getLayers(): Layer[] {
+            return this.layers as Layer[]
+        },
+        
     }
 
 
