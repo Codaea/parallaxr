@@ -21,8 +21,6 @@ function onUpload(event: FileUploadEvent) {
     <h1>This is an editor page</h1>
     <div class="toolbar">
       <h2>Layers</h2>
-      <img :src="a" />
-
       <FileUpload
         mode="basic"
         name="layerUpload"
