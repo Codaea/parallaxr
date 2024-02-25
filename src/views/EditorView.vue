@@ -29,32 +29,40 @@ function onUpload(event: FileUploadEvent) {
 </script>
 
 <template>
-  <div class="editor">
-    <h1>This is an editor page</h1>
-    <div class="toolbar">
-      <h2>Layers</h2>
-      <FileUpload
-        mode="basic"
-        name="layerUpload"
-        url="dummy"
-        customUpload
-        @uploader="onUpload"
-        accept=".png"
-        :auto="true"
-      />
+  <div class="flex flex-col h-screen bg-gray-900 text-white">
+    <div class="w-full h-16 bg-gray-700 flex items-center">
       <ul>
-        <li v-for="layer in layers" :key="layer.id">
-          <div>
-            <span>{{ layer.name }}</span>
-            <br />
-            <img :src="layer.url" :alt="layer.name" width="200px" />
-          </div>
+        <li>
+          <FileUpload
+            class="ml-2"
+            mode="basic"
+            name="layerUpload"
+            url="dummy"
+            customUpload
+            @uploader="onUpload"
+            accept=".png"
+            :auto="true"
+          />
         </li>
       </ul>
     </div>
-    <div class="preview_render">
-      <h2>Preview</h2>
-      <PreviewWindowVue />
+    <div class="flex flex-row h-screen">
+      <div class="bg-gray-800 w-64">
+        <div class="flex items-center justify-center">
+        <h1>Layers</h1>
+      </div>
+        <ul>
+          <li v-for="layer in layers" :key="layer.id">
+            <div>
+              <br />
+              <img :src="layer.url" :alt="layer.name" width="230" />
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="flex-grow">
+        <PreviewWindowVue />
+      </div>
     </div>
   </div>
 </template>
