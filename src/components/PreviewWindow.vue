@@ -18,7 +18,6 @@ onMounted(() => {
 </script>
 
 <template>
-  <h1>Preview Window</h1>
   <Application :width="meta.imageDimensions.width" :height="meta.imageDimensions.height">
     <PixiLayerComponent v-for="layer in layers" :key="layer.id" :layer="layer" />
   </Application>
