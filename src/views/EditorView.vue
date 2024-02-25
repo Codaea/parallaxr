@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import FileUpload from 'primevue/fileupload'
+import Slider from 'primevue/slider'
+import InputText from 'primevue/inputtext'
 import type FileUploadEvent from 'primevue/fileupload'
 import PreviewWindowVue from '../components/PreviewWindow.vue'
 
@@ -29,7 +31,7 @@ function onUpload(event: FileUploadEvent) {
 </script>
 
 <template>
-  <div class="flex flex-col h-screen bg-gray-900 text-white">
+  <div class="flex flex-col h-screen bg-gray-900 text-white overflow-visible">
     <div class="w-full h-16 bg-gray-700 flex items-center">
       <ul>
         <li>
@@ -46,16 +48,23 @@ function onUpload(event: FileUploadEvent) {
         </li>
       </ul>
     </div>
-    <div class="flex flex-row h-screen">
+    <div class="flex flex-row  h-screen">
       <div class="bg-gray-800 w-64">
         <div class="flex items-center justify-center">
-        <h1>Layers</h1>
-      </div>
+          <h1>Layers</h1>
+        </div>
         <ul>
           <li v-for="layer in layers" :key="layer.id">
             <div>
+              <div class="flex item-center justify-center"><span>{{ layer.name }}</span></div>
+                            
+              <InputText class="text-black" v-model.number="layer.speed" />
+              <Slider class="mt-4 ml-3 mr-2" v-model="layer.speed" :min="-25" :max="25" />
               <br />
-              <img :src="layer.url" :alt="layer.name" width="230" />
+              <div class="ml-2 mr-2 object-contain max-h-full max-w-full">
+              <img 
+              :src="layer.url" :alt="layer.name" />
+            </div>
             </div>
           </li>
         </ul>
