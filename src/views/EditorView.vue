@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import FileUpload from 'primevue/fileupload'
+import InputNumber from 'primevue/inputnumber'
 import Slider from 'primevue/slider'
 import InputText from 'primevue/inputtext'
 import PreviewWindowVue from '../components/PreviewWindow.vue'
 
 import { useLayerStore } from '@/stores/LayerStore'
 
-const { addLayer, layers } = useLayerStore()
+const { addLayer, layers, meta } = useLayerStore()
 
 function onUpload(event: any) {
   const file = event.files[0]
@@ -20,7 +21,7 @@ function onUpload(event: any) {
   let img = new Image()
   img.onload = function () {
     imageDimensions.width = (this as any).width;
-    imageDimensions.height = (this as any).width;
+    imageDimensions.height = (this as any).height;
 
     addLayer(url, name, imageDimensions)
   }
@@ -31,10 +32,10 @@ function onUpload(event: any) {
 <template>
   <div class="flex flex-col h-screen bg-gray-900 text-white overflow-visible">
     <div class="w-full h-16 bg-gray-700 flex items-center">
-      <ul>
-        <li>
+      <ul class="flex space-x-4 ">
+        <li class="list-none" >
           <FileUpload
-            class="ml-2"
+            class="ml-2 "
             mode="basic"
             name="layerUpload"
             url="dummy"
@@ -43,6 +44,11 @@ function onUpload(event: any) {
             accept=".png"
             :auto="true"
           />
+        </li>
+        <li class="list-none">
+          <InputNumber class="text-black mr-2" v-model="meta.imageDimensions.width" />
+          <span></span>
+          <InputNumber class="text-black" v-model="meta.imageDimensions.height" />
         </li>
       </ul>
     </div>
