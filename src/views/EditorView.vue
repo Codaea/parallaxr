@@ -8,7 +8,7 @@ import { useLayerStore } from '@/stores/LayerStore'
 
 const { addLayer, layers } = useLayerStore()
 
-function onUpload(event: any) {
+function onUpload(event: any) {// TODO fix type
   const file = event.files[0]
 
   const url = URL.createObjectURL(file)
@@ -19,8 +19,9 @@ function onUpload(event: any) {
 
   let img = new Image()
   img.onload = function () {
+    // TODO fix this bullshit fuckery
     imageDimensions.width = (this as any).width;
-    imageDimensions.height = (this as any).width;
+    imageDimensions.height = (this as any).height;
 
     addLayer(url, name, imageDimensions)
   }
@@ -56,7 +57,7 @@ function onUpload(event: any) {
             <div>
               <div class="flex item-center justify-center"><span>{{ layer.name }}</span></div>
               
-              <InputText class="text-black" v-model.number="layer.speed" /> 
+              <InputText class="text-black" v-model.number="layer.speed" /> <!-- TODO move this to InputNumber Component primevues-->
               <Slider class="mt-4 ml-3 mr-2" v-model="layer.speed" :min="-25" :max="25" />
               <br />
               <div class="ml-2 mr-2 object-contain max-h-full max-w-full">
