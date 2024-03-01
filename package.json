@@ -16,6 +16,8 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@ffmpeg/ffmpeg": "^0.12.10",
+    "@ffmpeg/util": "^0.12.1",
     "pinia": "^2.1.7",
     "pixi.js": "^7.4.0",
     "primeflex": "^3.3.1",

@@ -11,10 +11,10 @@ const props = defineProps<{
 }>();
  
 
-const tilePosition = ref({ x: 0, y: 0 })
+const tilePosition = ref({ x: props.layer.position.x, y: props.layer.position.y })
 
 
-const { meta } = useLayerStore();
+const { meta, } = useLayerStore();
 
 
 onTick((delta) => {
