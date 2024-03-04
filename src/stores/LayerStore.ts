@@ -1,111 +1,120 @@
-import { defineStore } from "pinia";
-import { useApplication } from "vue3-pixi";
-import { FFmpeg } from "@ffmpeg/ffmpeg";
-import { fetchFile } from "@ffmpeg/util";
+import { defineStore } from 'pinia'
+import type { Application } from 'pixi.js'
+import JSZip, { file } from 'jszip'
+import { saveAs } from 'file-saver'
 
 export interface Layer {
-    id: string;
-    name: string;
-    url: string;
-    visible: boolean;
-    speed: number; // animation speed
-    position: { x: number, y: number };
+  id: string
+  name: string
+  url: string
+  visible: boolean
+  speed: number // animation speed
+  position: { x: number; y: number }
 }
 
 export interface Meta {
-    imageDimensions: { width: number, height: number };
-    videoLength: number;
-    canvasRef: HTMLCanvasElement;
+  imageDimensions: { width: number; height: number }
+  videoLength: number
+  canvasRef: HTMLCanvasElement
 }
 
 export const useLayerStore = defineStore('layerStore', {
-    state: () => ({
-        layers: [] as Layer[],
-        meta: {
-            imageDimensions: {
-                width: 1,
-                height: 1
-            },
-            videoLength: 0,
-            canvasRef: null as HTMLCanvasElement | null
-        } as Meta,
-    }),
-    actions: {
-        addLayer(url : string, name: string, imageDimensions: { width: number, height: number }) {
-            const layer: Layer = {
-                id: Math.random().toString(),
-                name: name,
-                visible: true,
-                url: url,
-                speed: 1,
-                position: { x: 0, y: 0 }
-            }
+  state: () => ({
+    layers: [] as Layer[],
+    meta: {
+      imageDimensions: {
+        width: 1,
+        height: 1
+      },
+      videoLength: 0,
+      canvasRef: null as HTMLCanvasElement | null
+    } as Meta,
+    app: null as Application | null
+  }),
+  actions: {
+    addLayer(url: string, name: string, imageDimensions: { width: number; height: number }) {
+      const layer: Layer = {
+        id: Math.random().toString(),
+        name: name,
+        visible: true,
+        url: url,
+        speed: 1,
+        position: { x: 0, y: 0 }
+      }
 
-            if (this.layers.length == 0) { // first layer
-                console.log(imageDimensions)
-                this.meta.imageDimensions = imageDimensions
-            }
+      if (this.layers.length == 0) {
+        // first layer
+        console.log(imageDimensions)
+        this.meta.imageDimensions = imageDimensions
+      }
 
-            this.layers.push(layer)
-        },
-        onExport() {
-            console.log('export')
-          
-            const app = useApplication()
-            const ffmpeg = new FFmpeg()
-
-            app.value.ticker.stop() // stop ticker for render
-          
-            for (const layer of this.layers) { // reset all positions
-                layer.position = { x: 0, y: 0 }
-            } 
-            ffmpeg.load()
-            const canvas = this.meta.canvasRef
-
-            async function writeFrame(i:number, url:string) {
-                const fileData = await fetchFile(url)
-                ffmpeg.writeFile(`frame%04d`, fileData )
-                // ffmpeg.writeFile(`frame00${i}`, fileData )
-            }
-
-            for (let i = 0 ; i < this.meta.videoLength; i++) { // render all frames and copy to ffmpeg fs
-                
-                const url = canvas.toDataURL()
-                writeFrame(i, url)
-                app.value.ticker.update()
-            }
-
-            const fps = this.meta.fps
-            
-            // render video via ffmpeg
-            ffmpeg.exec(['-r', '30', // fps
-            '-s', '1920x1080', // dimensions
-             '-i', 'frame%04d', // input
-              'out.mp4'])   // output
-
-            ffmpeg.readFile('out.mp4').then((data) => {
-                const blob = new Blob([data], { type: 'video/mp4' })
-                const url = URL.createObjectURL(blob)
-                const a = document.createElement('a')
-            
-            })
-          },
-          changeFPS(fps: number) {
-            const app = useApplication()
-
-            app.value.ticker.maxFPS = fps 
-          }
-        
+      this.layers.push(layer)
     },
-    getters: {
-        getLayers(): Layer[] {
-            return this.layers as Layer[]
-        },
-        getLayerById(id): Layer | undefined {
-            return Object.values(this.layers).find(layer => id === layer.id);
-        }
-        
+    onExport() {
+      console.log('export')
+
+      if (this.app === null) {
+        return
+      }
+
+      const app = this.app
+
+      app.ticker.stop() // stop ticker for render
+
+      for (const layer of this.layers) {
+        // reset all positions
+        layer.position = { x: 0, y: 0 }
+      }
+
+      const canvas = this.meta.canvasRef as HTMLCanvasElement
+
+      const zip = new JSZip()
+      let frameCount = 0
+      const blobPromises = []
+
+      for (let i = 0; i < 100; i++) {
+        // render all frames and copy to ffmpeg fs
+        console.log('test')
+        const blobPromise = new Promise<void>((resolve) => {
+          canvas.toBlob((blob) => {
+            if (blob) {
+              // Add the blob to the zip file
+              // Use padStart to add leading zeros to the frame count
+              const frameName = `frame${String(frameCount).padStart(4, '0')}.png`
+              zip.file(frameName, blob)
+              frameCount++
+            }
+            resolve()
+          })
+        })
+        blobPromises.push(blobPromise)
+        app.ticker.update()
+      }
+
+      // Wait for all blobs to be created before generating the zip file
+      Promise.all(blobPromises).then(() => {
+        zip.generateAsync({ type: 'blob' }).then((content) => {
+          saveAs(content, 'frames.zip')
+        })
+      })
+
+      //      const fps = this.meta.fps
+    },
+    changeFPS(fps: number) {
+      const app = this.app
+      if (app === null) {
+        return
+      }
+
+      app.ticker.maxFPS = fps
     }
-
-
+  },
+  getters: {
+    getLayers(): Layer[] {
+      return this.layers as Layer[]
+    },
+    getLayerById(id): Layer | undefined {
+      return Object.values(this.layers).find((layer) => id === layer.id)
+    }
+  }
 })

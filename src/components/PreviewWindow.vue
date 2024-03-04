@@ -10,13 +10,11 @@ const { layers, meta } = useLayerStore()
 
 
 onMounted(() => {
-  const app = useApplication()
-  const screen = useScreen(app)
-  const render = useRenderer(app)
-  const stage = useStage(app)
+  let { app } = useLayerStore()
+  app = useApplication()
+  meta.canvasRef = document.getElementById('canvas') as HTMLCanvasElement
 
 })
-meta.canvasRef = document.getElementById('canvas') as HTMLCanvasElement
 
 </script>
 

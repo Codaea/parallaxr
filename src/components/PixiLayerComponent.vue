@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import { onMounted } from 'vue';
 import { ref } from 'vue';
 
 import { useLayerStore } from '@/stores/LayerStore';
 import type { Layer } from '@/stores/LayerStore';
-import { onTick } from 'vue3-pixi';
+import { onTick, useApplication } from 'vue3-pixi';
 
 
 const props = defineProps<{
@@ -14,8 +15,11 @@ const props = defineProps<{
 const tilePosition = ref({ x: props.layer.position.x, y: props.layer.position.y })
 
 
-const { meta, } = useLayerStore();
+const { meta, app } = useLayerStore();
 
+onMounted(() => {
+  useLayerStore().app = useApplication().value
+})
 
 onTick((delta) => {
   tilePosition.value.x += props.layer.speed * delta;

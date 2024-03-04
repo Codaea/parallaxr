@@ -3,11 +3,12 @@ import FileUpload from 'primevue/fileupload'
 import InputNumber from 'primevue/inputnumber'
 import Slider from 'primevue/slider'
 import InputText from 'primevue/inputtext'
+import Button from 'primevue/button'
 import PreviewWindowVue from '../components/PreviewWindow.vue'
 
 import { useLayerStore } from '@/stores/LayerStore'
 
-const { addLayer, layers, meta } = useLayerStore()
+const { addLayer, layers, meta, onExport } = useLayerStore()
 
 function onUpload(event: any) {// TODO fix type
   const file = event.files[0]
@@ -50,6 +51,9 @@ function onUpload(event: any) {// TODO fix type
           <InputNumber class="text-black mr-2" v-model="meta.imageDimensions.width" />
           <span></span>
           <InputNumber class="text-black" v-model="meta.imageDimensions.height" />
+        </li>
+        <li>
+          <Button label="export" @click="onExport()"/>
         </li>
       </ul>
     </div>
