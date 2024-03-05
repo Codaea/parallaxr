@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import type { Application } from 'pixi.js'
-import JSZip, { file } from 'jszip'
+import JSZip from 'jszip'
 import { saveAs } from 'file-saver'
 
 export interface Layer {
@@ -14,7 +14,8 @@ export interface Layer {
 
 export interface Meta {
   imageDimensions: { width: number; height: number }
-  videoLength: number
+  videoLength: number,
+  fps: number,
   canvasRef: HTMLCanvasElement
 }
 
@@ -27,6 +28,7 @@ export const useLayerStore = defineStore('layerStore', {
         height: 1
       },
       videoLength: 0,
+      fps: 30,
       canvasRef: null as HTMLCanvasElement | null
     } as Meta,
     app: null as Application | null
@@ -50,7 +52,7 @@ export const useLayerStore = defineStore('layerStore', {
 
       this.layers.push(layer)
     },
-    onExport() {
+    async onExport() {
       console.log('export')
 
       if (this.app === null) {
@@ -58,7 +60,6 @@ export const useLayerStore = defineStore('layerStore', {
       }
 
       const app = this.app
-
       app.ticker.stop() // stop ticker for render
 
       for (const layer of this.layers) {
@@ -72,9 +73,9 @@ export const useLayerStore = defineStore('layerStore', {
       let frameCount = 0
       const blobPromises = []
 
-      for (let i = 0; i < 100; i++) {
-        // render all frames and copy to ffmpeg fs
-        console.log('test')
+      const totalFrames = this.meta.videoLength * this.meta.fps
+
+      for (let i = 0; i < totalFrames; i++) {
         const blobPromise = new Promise<void>((resolve) => {
           canvas.toBlob((blob) => {
             if (blob) {
@@ -84,11 +85,18 @@ export const useLayerStore = defineStore('layerStore', {
               zip.file(frameName, blob)
               frameCount++
             }
-            resolve()
+           resolve()
           })
         })
         blobPromises.push(blobPromise)
-        app.ticker.update()
+        await blobPromise
+
+        for (const layer of this.layers) {
+          layer.position.x += layer.speed
+        }
+        app.render()
+
+
       }
 
       // Wait for all blobs to be created before generating the zip file
@@ -99,22 +107,15 @@ export const useLayerStore = defineStore('layerStore', {
       })
 
       //      const fps = this.meta.fps
+      app.ticker.start()
     },
     changeFPS(fps: number) {
       const app = this.app
       if (app === null) {
         return
       }
-
+      this.meta.fps = fps
       app.ticker.maxFPS = fps
     }
   },
-  getters: {
-    getLayers(): Layer[] {
-      return this.layers as Layer[]
-    },
-    getLayerById(id): Layer | undefined {
-      return Object.values(this.layers).find((layer) => id === layer.id)
-    }
-  }
 })

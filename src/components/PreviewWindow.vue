@@ -11,6 +11,7 @@ const { layers, meta } = useLayerStore()
 
 onMounted(() => {
   let { app } = useLayerStore()
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   app = useApplication()
   meta.canvasRef = document.getElementById('canvas') as HTMLCanvasElement
 
