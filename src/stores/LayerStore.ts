@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-import type { Application } from 'pixi.js'
 import JSZip from 'jszip'
 import { saveAs } from 'file-saver'
 
@@ -27,11 +26,11 @@ export const useLayerStore = defineStore('layerStore', {
         width: 1,
         height: 1
       },
-      videoLength: 0,
+      videoLength: 30,
       fps: 30,
       canvasRef: null as HTMLCanvasElement | null
     } as Meta,
-    app: null as Application | null
+    app: null as  any | null
   }),
   actions: {
     addLayer(url: string, name: string, imageDimensions: { width: number; height: number }) {
@@ -104,10 +103,12 @@ export const useLayerStore = defineStore('layerStore', {
         zip.generateAsync({ type: 'blob' }).then((content) => {
           saveAs(content, 'frames.zip')
         })
+      }).then(() =>
+      {
+        app.ticker.start()
+      
       })
-
       //      const fps = this.meta.fps
-      app.ticker.start()
     },
     changeFPS(fps: number) {
       const app = this.app

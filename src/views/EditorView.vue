@@ -67,7 +67,7 @@ function onUpload(event: any) {// TODO fix type
             <div>
               <div class="flex item-center justify-center"><span>{{ layer.name }}</span></div>
               
-              <InputText class="text-black" v-model.number="layer.speed" /> <!-- TODO move this to InputNumber Component primevues-->
+              <InputNumber class="text-black" v-model.number="layer.speed" /> <!-- TODO move this to InputNumber Component primevues-->
               <Slider class="mt-4 ml-3 mr-2" v-model="layer.speed" :min="-25" :max="25" />
               <br />
               <div class="ml-2 mr-2 object-contain max-h-full max-w-full">

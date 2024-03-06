@@ -12,15 +12,13 @@ const props = defineProps<{
 const { meta, app, layers } = useLayerStore();
 
 let layer = layers.find((layer) => layer.id === props.layer.id)?.position;
-if (layer === undefined) {
-  throw new Error('Layer not found');
-}
 
 onMounted(() => {
   useLayerStore().app = useApplication().value
 })
 
 onTick((delta) => {
+  if (!layer) return;
   layer.x += props.layer.speed * delta;
 })
 
