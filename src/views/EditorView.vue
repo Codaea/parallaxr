@@ -48,9 +48,18 @@ function onUpload(event: any) {// TODO fix type
           />
         </li>
         <li class="list-none">
+          <span>width</span>
           <InputNumber class="text-black mr-2" v-model="meta.imageDimensions.width" />
-          <span></span>
+          <span>height</span>
           <InputNumber class="text-black" v-model="meta.imageDimensions.height" />
+        </li>
+        <li>
+          <span>Fps</span>
+          <InputNumber class="text-black" v-model="meta.fps" />
+        </li>
+        <li>
+          <span>Duration (seconds)</span>
+          <InputNumber class="text-black" v-model="meta.videoLength" />
         </li>
         <li>
           <Button label="export" @click="onExport()"/>
