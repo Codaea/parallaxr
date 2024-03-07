@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import FileUpload from 'primevue/fileupload'
 import InputNumber from 'primevue/inputnumber'
 import Slider from 'primevue/slider'
-import Button from 'primevue/button'
+
 import PreviewWindowVue from '../components/PreviewWindow.vue'
+import OptionsWindow from '../components/OptionsWindow.vue'
 
 import { useLayerStore } from '@/stores/LayerStore'
 
@@ -32,39 +32,7 @@ function onUpload(event: any) {// TODO fix type
 
 <template>
   <div class="flex flex-col h-screen bg-gray-900 text-white overflow-visible">
-    <div class="w-full h-16 bg-gray-700 flex items-center">
-      <ul class="flex space-x-4 ">
-        <li class="list-none" >
-          <FileUpload
-            class="ml-2 "
-            mode="basic"
-            name="layerUpload"
-            url="dummy"
-            customUpload
-            @uploader="onUpload"
-            accept=".png"
-            :auto="true"
-          />
-        </li>
-        <li class="list-none">
-          <span>width</span>
-          <InputNumber class="text-black mr-2" v-model="meta.imageDimensions.width" />
-          <span>height</span>
-          <InputNumber class="text-black" v-model="meta.imageDimensions.height" />
-        </li>
-        <li>
-          <span>Fps</span>
-          <InputNumber class="text-black" v-model="meta.fps" />
-        </li>
-        <li>
-          <span>Duration (seconds)</span>
-          <InputNumber class="text-black" v-model="meta.videoLength" />
-        </li>
-        <li>
-          <Button label="export" @click="onExport()"/>
-        </li>
-      </ul>
-    </div>
+    <OptionsWindow />
     <div class="flex flex-row  h-screen">
       <div class="bg-gray-800 w-64">
         <div class="flex items-center justify-center">
@@ -74,7 +42,6 @@ function onUpload(event: any) {// TODO fix type
           <li v-for="layer in layers" :key="layer.id">
             <div>
               <div class="flex item-center justify-center"><span>{{ layer.name }}</span></div>
-              
               <InputNumber class="text-black" v-model.number="layer.speed" />
               <Slider class="mt-4 ml-3 mr-2" v-model="layer.speed" :min="-25" :max="25" />
               <br />
