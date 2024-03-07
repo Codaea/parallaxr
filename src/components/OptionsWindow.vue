@@ -5,7 +5,7 @@ import Button from 'primevue/button'
 
 import { useLayerStore } from '@/stores/LayerStore'
 
-const { addLayer, meta, onExport } = useLayerStore()
+const { addLayer, meta, onExport, changeFPS } = useLayerStore()
 
 function onUpload(event: any) {// TODO fix type
   const file = event.files[0]
@@ -51,7 +51,7 @@ function onUpload(event: any) {// TODO fix type
         </li>
         <li>
           <span>Fps</span>
-          <InputNumber class="text-black" v-model="meta.fps" />
+          <InputNumber class="text-black" v-model="meta.fps" @update:modelValue="changeFPS()" />
         </li>
         <li>
           <span>Duration (seconds)</span>

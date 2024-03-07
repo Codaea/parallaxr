@@ -110,13 +110,15 @@ export const useLayerStore = defineStore('layerStore', {
       })
       //      const fps = this.meta.fps
     },
-    changeFPS(fps: number) {
+    changeFPS() {
       const app = this.app
       if (app === null) {
         return
       }
-      this.meta.fps = fps
+      const fps = this.meta.fps
+      console.log('change fps', fps)
       app.ticker.maxFPS = fps
+      app.ticker.minFPS = fps - 10
     }
   },
 })
