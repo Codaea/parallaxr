@@ -2,7 +2,6 @@
 import FileUpload from 'primevue/fileupload'
 import InputNumber from 'primevue/inputnumber'
 import Slider from 'primevue/slider'
-import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import PreviewWindowVue from '../components/PreviewWindow.vue'
 
@@ -76,7 +75,7 @@ function onUpload(event: any) {// TODO fix type
             <div>
               <div class="flex item-center justify-center"><span>{{ layer.name }}</span></div>
               
-              <InputNumber class="text-black" v-model.number="layer.speed" /> <!-- TODO move this to InputNumber Component primevues-->
+              <InputNumber class="text-black" v-model.number="layer.speed" />
               <Slider class="mt-4 ml-3 mr-2" v-model="layer.speed" :min="-25" :max="25" />
               <br />
               <div class="ml-2 mr-2 object-contain max-h-full max-w-full">
