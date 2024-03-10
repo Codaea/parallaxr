@@ -11,9 +11,10 @@ import SettingWindow from '../components/SettingWindow.vue'
         <LayersWindow class="flex-auto"/>
         <SettingWindow class="flex-none"/>
       </div>
-      <div class="flex-grow">
-        <PreviewWindowVue />
+      <div class="flex-grow overflow-auto">
+        <PreviewWindowVue class="w-full h-full" />
       </div>
     </div>
   </div>
+  <div class="bg-gray-900 h-screen"></div>
 </template>
